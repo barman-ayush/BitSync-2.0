@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import LaunchUI from "@/components/logos/launch-ui";
 import { ModeToggle } from "./theme-button";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
   return (
@@ -17,23 +18,25 @@ export default function Navbar() {
       <div className="relative mx-auto max-w-container">
         <NavbarComponent>
           <NavbarLeft className="ml-0 md:ml-5">
-            <a
-              href="/"
-              className="flex items-center gap-2 text-xl font-bold"
-            >
+            <a href="/" className="flex items-center gap-2 text-xl font-bold">
               <LaunchUI />
               Launch UI
             </a>
             <Navigation />
           </NavbarLeft>
           <NavbarRight>
-            <a href="/" className="hidden text-sm md:block">
-              Sign in
-            </a>
-            <ModeToggle/>
+            <SignedOut>
+              <SignInButton>
+                <Button>Sign in</Button>
+              </SignInButton>
+            </SignedOut>
+            <ModeToggle />
             <Button variant="default" asChild className="hidden md:block">
               <a href="/">Get Started</a>
             </Button>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
             <Sheet>
               <SheetTrigger asChild>
                 <Button
