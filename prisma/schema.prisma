@@ -1,15 +1,117 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id            String    @id @default(cuid())
+  username      String    @unique
+  email         String    @unique
+  password      String
+  avatarUrl     String?
+  bio           String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  ownedRepos    Repo[]    @relation("RepoOwner")
+  commits       Commit[]
+  
+  // Role-based relations
+  adminRepos    Repo[]    @relation("RepoAdmins")
+  collaboratorRepos Repo[] @relation("RepoCollaborators")
+  viewerRepos   Repo[]    @relation("RepoViewers")
+}
+
+// Repository model
+model Repo {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?   @db.Text
+  isPublic      Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Owner relation
+  ownerId       String
+  owner         User      @relation("RepoOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  // Permission relations
+  admins        User[]    @relation("RepoAdmins")
+  collaborators User[]    @relation("RepoCollaborators")
+  viewers       User[]    @relation("RepoViewers")
+  
+  // Content relations - using combined approach
+  rootNodes     FileSystemNode[] @relation("RepoRootNodes")
+  commits       Commit[]
+
+  @@index([ownerId])
+  @@unique([ownerId, name]) // Ensures a user can't have two repos with same name
+}
+
+// Commit model for version control
+model Commit {
+  id            String    @id @default(cuid())
+  message       String    @db.Text
+  commitHash    String    @unique
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  repoId        String
+  repo          Repo      @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  
+  authorId      String
+  author        User      @relation(fields: [authorId], references: [id])
+  
+  // Nodes affected by this commit (files or folders)
+  nodes         FileSystemNode[]
+
+  @@index([repoId])
+  @@index([authorId])
+}
+
+// Combined model for both files and folders
+model FileSystemNode {
+  id            String    @id @default(cuid())
+  name          String
+  type          NodeType  // FOLDER or FILE
+  mimeType      String?   // Only for files
+  size          Int?      // Only for files
+  content       Bytes?    // Only for files
+  contentUrl    String?   // Only for files
+  fileHash      String?   // Only for files
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  repoId        String?
+  repo          Repo?     @relation("RepoRootNodes", fields: [repoId], references: [id], onDelete: Cascade)
+
+  // Parent reference (null if root node)
+  parentId      String?
+  parent        FileSystemNode? @relation("NodeChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  
+  // Children (only for folders)
+  children      FileSystemNode[] @relation("NodeChildren")
+  
+  // Version control
+  commits       Commit[]
+
+  @@index([repoId])
+  @@index([parentId])
+  @@unique([parentId, name]) // Ensures unique names within a parent
+  @@unique([repoId, name, parentId]) // Ensures unique names across repo when parent is null
+}
+
+enum NodeType {
+  FILE
+  FOLDER
 }

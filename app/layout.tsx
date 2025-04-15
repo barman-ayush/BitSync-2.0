@@ -10,6 +10,8 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import Logger from "@/components/logger.component";
+import { FlashProvider } from "@/components/Flash.component";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,9 +45,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="child-wrapper">
-            {children}
-            </div>
+            <FlashProvider>
+              <div className="child-wrapper">
+                <Logger />
+                {children}
+              </div>
+            </FlashProvider>
           </ThemeProvider>
         </body>
       </html>
