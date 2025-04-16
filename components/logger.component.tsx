@@ -9,29 +9,22 @@ import { useUserContext } from "@/context/userContext";
 const Logger = () => {
   const { user, isSignedIn } = useUser();
   const { setUserData } = useUserContext();
-  console.log(
-    "USER => ",
-    user,
-    user?.fullName,
-    user?.primaryEmailAddress?.emailAddress,
-    user?.imageUrl
-  );
   const { flash } = useFlash();
   useEffect(() => {
     // Async Fucntion definition :
 
     const registerUser = async () => {
       const response = await axios.post("/api/user/register", {
-        username: user?.fullName,
+        username: user?.primaryEmailAddress?.emailAddress?.split("@")[0],
         email: user?.primaryEmailAddress?.emailAddress,
         src: user?.imageUrl,
       });
-      console.log(" [REGISTER_USER] : ", response.data);
       setUserData(response.data.userData);
     };
 
     try {
       if (isSignedIn) {
+        console.log("SETTING STATE : ");
         registerUser();
       }
     } catch (e: any) {

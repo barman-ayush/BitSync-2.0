@@ -32,7 +32,7 @@ export async function POST(
         }
 
         return NextResponse.json({ userData });
-    } catch (error) {
+    } catch (error : any) {
         return handleError({ error, route: "RESITER_USER", statusCode: 500 })
     }
 }

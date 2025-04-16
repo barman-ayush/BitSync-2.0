@@ -8,3 +8,9 @@ export type UserProps = {
   createdAt: any;
   updatedAt: any;
 };
+
+export interface RepositoryFormData {
+  name: string;
+  description: string;
+  isPublic: boolean;
+}
