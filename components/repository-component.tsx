@@ -46,67 +46,8 @@ import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
 import RepoAccess from "./repo-access.component";
 import MergeConflictResolver from "./merge-conflict.component";
+import { FileSystemNode, NodeType, RepositoryDetails } from "@/lib/type";
 
-// Types based on the Prisma schema
-enum NodeType {
-  FILE = "FILE",
-  FOLDER = "FOLDER",
-}
-
-interface User {
-  id: string;
-  username: string;
-  avatarUrl?: string;
-  bio?: string;
-  email : string;
-}
-
-interface RepoData {
-  id: string;
-  name: string;
-  description?: string;
-  isPublic: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FileSystemNode {
-  id: string;
-  name: string;
-  type: NodeType;
-  mimeType?: string;
-  size?: number;
-  contentUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-  children?: FileSystemNode[];
-  parentId?: string | null;
-}
-
-
-export interface RepositoryDetails {
-  repo: RepoData;
-  owner: User;
-  rootNodes: FileSystemNode[];
-  admins: User[] | [];
-  collaborators: User[] | [];
-  viewers: User[] | [];
-}
-
-// Sample data for commits (API doesn't yet return commits)
-// const commits = [
-//   {
-//     id: "commit-1",
-//     message: "Initial commit",
-//     commitHash: "a1b2c3d4e5f6",
-//     createdAt: new Date().toISOString(),
-//     author: {
-//       id: "user-1",
-//       username: "system",
-//       email: "system@example.com",
-//     },
-//   },
-// ];
 
 export default function RepositoryViewer({
   user,

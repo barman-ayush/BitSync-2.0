@@ -25,50 +25,9 @@ import { useFlash } from "./Flash.component";
 import { handleClientError } from "@/lib/utils";
 import { useUserContext } from "@/context/userContext";
 import { Badge } from "./ui/badge";
+import { RepositoryDetails, User } from "@/lib/type";
 
 type UserRole = "OWNER" | "ADMIN" | "COLLABORATOR" | "VIEWER";
-
-interface User {
-  id: string;
-  username: string;
-  email?: string;
-  avatarUrl?: string;
-  bio?: string;
-}
-
-
-type NodeType = 'FILE' | 'FOLDER';
-
-interface RepoData {
-  id: string;
-  name: string;
-  description?: string;
-  isPublic: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface FileSystemNode {
-  id: string;
-  name: string;
-  type: NodeType;
-  mimeType?: string;
-  size?: number;
-  contentUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-  children?: FileSystemNode[];
-  parentId?: string | null;
-}
-
-export interface RepositoryDetails {
-    repo: RepoData;
-    owner: User;
-    rootNodes: FileSystemNode[];
-    admins: User[] | [];
-    collaborators: User[] | [];
-    viewers: User[] | [];
-  }
 
 const RepoAccess = ({ repoDetails }: { repoDetails: RepositoryDetails }) => {
   const { flash } = useFlash();
