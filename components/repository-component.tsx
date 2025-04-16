@@ -44,6 +44,8 @@ import { handleClientError } from "@/lib/utils";
 import axios from "axios";
 import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
+import RepoAccess from "./repo-access.component";
+import MergeConflictResolver from "./merge-conflict.component";
 
 // Types based on the Prisma schema
 enum NodeType {
@@ -51,13 +53,12 @@ enum NodeType {
   FOLDER = "FOLDER",
 }
 
-type UserRole = "OWNER" | "ADMIN" | "COLLABORATOR" | "VIEWER";
-
-interface Owner {
+interface User {
   id: string;
   username: string;
   avatarUrl?: string;
   bio?: string;
+  email : string;
 }
 
 interface RepoData {
@@ -82,10 +83,14 @@ interface FileSystemNode {
   parentId?: string | null;
 }
 
-interface RepositoryDetails {
+
+export interface RepositoryDetails {
   repo: RepoData;
-  owner: Owner;
+  owner: User;
   rootNodes: FileSystemNode[];
+  admins: User[] | [];
+  collaborators: User[] | [];
+  viewers: User[] | [];
 }
 
 // Sample data for commits (API doesn't yet return commits)
@@ -125,8 +130,7 @@ export default function RepositoryViewer({
   const [commits, setcommits] = useState<any>([]);
   const [selectedCommit, setSelectedCommit] = useState(commits[0]?.id || "");
   const [currentPath, setCurrentPath] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRole, setSelectedRole] = useState<UserRole>("COLLABORATOR");
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [folderNodes, setFolderNodes] = useState<
     Record<string, FileSystemNode[]>
@@ -725,98 +729,11 @@ export default function RepositoryViewer({
           </TabsContent>
 
           <TabsContent value="access" className="flex-1 p-4 overflow-auto">
-            <div className="space-y-6">
-              <Card>
-                <CardContent className="p-4">
-                  <h3 className="text-lg font-medium mb-4">
-                    User Access Management
-                  </h3>
-
-                  <div className="flex flex-col md:flex-row gap-4 mb-6">
-                    <div className="flex-1">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Search by username or email"
-                          className="pl-10"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2 w-full md:w-auto">
-                      <Select
-                        value={selectedRole}
-                        onValueChange={(value) =>
-                          setSelectedRole(value as UserRole)
-                        }
-                      >
-                        <SelectTrigger className="w-full md:w-[200px]">
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ADMIN">Administrator</SelectItem>
-                          <SelectItem value="COLLABORATOR">
-                            Collaborator
-                          </SelectItem>
-                          <SelectItem value="VIEWER">Viewer</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      <Button className="whitespace-nowrap">Add User</Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <Shield className="h-4 w-4 mr-2 text-purple-500" />
-                        Owner
-                      </h4>
-                      <div className="bg-accent/50 rounded-md p-3 flex items-center justify-between">
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-3">
-                            <img
-                              src={
-                                repoDetails.owner.avatarUrl ||
-                                "https://github.com/shadcn.png"
-                              }
-                              alt={repoDetails.owner.username}
-                            />
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">
-                              {repoDetails.owner.username}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {repoDetails.owner.bio || "No bio provided"}
-                            </div>
-                          </div>
-                        </div>
-                        <Badge>Owner</Badge>
-                      </div>
-                    </div>
-
-                    {/* Future implementation will show admins, collaborators, and viewers here */}
-                    <div className="py-4 text-center text-muted-foreground">
-                      No additional users have access to this repository
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <RepoAccess repoDetails={repoDetails} />
           </TabsContent>
 
           <TabsContent value="conflicts" className="flex-1 p-4 overflow-auto">
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-medium">Conflicts Management</h3>
-              <p className="text-muted-foreground max-w-md mt-2">
-                This section will show merge conflicts and allow you to resolve
-                them. Currently, there are no conflicts to resolve.
-              </p>
-            </div>
+            <MergeConflictResolver />
           </TabsContent>
         </Tabs>
       </div>

@@ -36,10 +36,31 @@ export async function GET(request: NextRequest) {
             bio: true,
           },
         },
-        admins: { select: { id: true } },
-        collaborators: { select: { id: true } },
-        viewers: { select: { id: true } },
-        commits: { select: { commitHash: true, id: true , message : true } }
+        admins: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            bio: true,
+          }
+        },
+        collaborators: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            bio: true,
+          }
+        },
+        viewers: {
+          select: {
+            id: true,
+            username: true,
+            avatarUrl: true,
+            bio: true,
+          }
+        },
+        commits: { select: { commitHash: true, id: true, message: true } }
       },
     });
 
@@ -92,10 +113,13 @@ export async function GET(request: NextRequest) {
           isPublic: repo.isPublic,
           createdAt: repo.createdAt,
           updatedAt: repo.updatedAt,
-          commits : repo.commits
+          commits: repo.commits
         },
         owner: repo.owner,
         rootNodes,
+        admins : repo.admins,
+        viewers : repo.viewers,
+        collaborators : repo.collaborators,
       },
     });
   } catch (error: any) {
