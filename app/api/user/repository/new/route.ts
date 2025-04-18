@@ -7,9 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { id, name, description = "", isPublic } = body;
+        const { id, name, description = "", isPublic = true } = body;
         console.log("[ BODY ]  : " , body);
-        if (!id || !name || !isPublic) {
+        if (!id || !name) {
             throw new AppError("Data Missing !!");
         }
 

@@ -88,12 +88,13 @@ export default function RepositoryViewer({
 
       if (res.data.success) {
         setRepoDetails(res.data.data);
+      } else if (res.data.success == false) {
+        setAccessDenied(true);
       } else {
         setError("Failed to load repository details");
       }
     } catch (error: any) {
       console.error("Error fetching repository:", error);
-
       if (error.response?.status === 403) {
         setAccessDenied(true);
       } else if (error.response?.status === 404) {
@@ -251,7 +252,6 @@ export default function RepositoryViewer({
             className="flex-1 p-0 m-0 overflow-hidden flex flex-col"
           >
             <RepoFolders commits={commits} repoDetails={repoDetails} />
-
           </TabsContent>
 
           <TabsContent value="access" className="flex-1 p-4 overflow-auto">

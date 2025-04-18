@@ -79,7 +79,8 @@ export async function GET(request: NextRequest) {
       repo.viewers.some(user => user.id === currentUserId);
 
     if (!hasAccess) {
-      throw new AppError("You do not have permission to access this repository", 403);
+      return NextResponse.json({success : false , message : "Not Allowed to access!"})
+      // throw new AppError("You do not have permission to access this repository", 403);
     }
 
     // Fetch root nodes (files + folders with parentId null)
