@@ -20,7 +20,7 @@ export default function Navbar() {
           <NavbarLeft className="ml-0 md:ml-5">
             <a href="/" className="flex items-center gap-2 text-xl font-bold">
               <LaunchUI />
-              Launch UI
+              BitSync
             </a>
             <Navigation />
           </NavbarLeft>
@@ -32,7 +32,10 @@ export default function Navbar() {
             </SignedOut>
             <ModeToggle />
             <Button variant="default" asChild className="hidden md:block">
-              <a href="/">Get Started</a>
+              <a href="/dashboard">Profile</a>
+            </Button>
+            <Button variant="default" asChild className="hidden md:block">
+              <a href="/repository">Get Started</a>
             </Button>
             <SignedIn>
               <UserButton />

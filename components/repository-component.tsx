@@ -49,6 +49,10 @@ import MergeConflictResolver from "./merge-conflict.component";
 import { FileSystemNode, NodeType, RepositoryDetails } from "@/lib/type";
 import RepoSideBar from "./repo-sidebar.component";
 import RepoFolders from "./repo-folders.component";
+import AccessDenied from "./handlers/access-denied.component";
+import RepoNotFound from "./handlers/repo-not-found.component";
+import Loading from "./handlers/loading.component";
+import Error from "./handlers/error.component";
 
 export default function RepositoryViewer({
   user,
@@ -59,7 +63,6 @@ export default function RepositoryViewer({
 }) {
   const { flash } = useFlash();
   const userContext = useUserContext();
-  const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -140,71 +143,15 @@ export default function RepositoryViewer({
   }, []);
 
   // Loading state
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center">
-          <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-          <h3 className="text-xl font-medium">Loading repository...</h3>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   // Error state
-  if (error) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center text-center max-w-md">
-          <XCircle className="h-12 w-12 text-destructive mb-4" />
-          <h3 className="text-xl font-medium">Repository Not Found</h3>
-          <p className="text-muted-foreground mt-2 mb-6">{error}</p>
-          <Button onClick={() => router.push("/")}>Return to Dashboard</Button>
-        </div>
-      </div>
-    );
-  }
+  if (error) return <Error error={error} />;
 
   // Access denied state
-  if (accessDenied) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center text-center max-w-md">
-          <Lock className="h-12 w-12 text-amber-500 mb-4" />
-          <h3 className="text-xl font-medium">Access Denied</h3>
-          <p className="text-muted-foreground mt-2 mb-6">
-            You don't have permission to access this repository. Please contact
-            the repository owner for access.
-          </p>
-          <div className="flex gap-4">
-            {userContext.userData ? (
-              <Button onClick={() => router.push("/")}>
-                Return to Dashboard
-              </Button>
-            ) : (
-              <>
-                <Button variant="outline" onClick={() => router.push("/login")}>
-                  Log In
-                </Button>
-                <Button onClick={() => router.push("/signup")}>Sign Up</Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (accessDenied) return <AccessDenied />;
 
-  if (!repoDetails) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center">
-          <AlertTriangle className="h-12 w-12 text-amber-500 mb-4" />
-          <h3 className="text-xl font-medium">No repository data available</h3>
-        </div>
-      </div>
-    );
-  }
+  if (!repoDetails) return <RepoNotFound />;
 
   return (
     <div className="w-full h-screen bg-background flex relative">

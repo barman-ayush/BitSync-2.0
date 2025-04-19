@@ -100,6 +100,7 @@ const CreateRepository: React.FC = () => {
       flash("Repository Created Successfully !!", { variant: "success" });
 
       // TODO : redirect to repo
+      router.push(`/repository/${userData?.username}/${formData.name}`)
 
     } catch (error) {
       handleClientError(error, "NEW_REPO_CREATION", flash);

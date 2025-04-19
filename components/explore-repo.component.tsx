@@ -106,8 +106,8 @@ const ExploreRepositories: React.FC<ExploreRepositoriesProps> = ({
       const mockRepositories: Repository[] = [
         {
           id: '1',
-          name: 'bitsync-core',
-          owner: 'bitsync',
+          name: 'BitSync2.0',
+          owner: 'barmanayush2980',
           description: 'Core functionality for the BitSync distributed version control system',
           stars: 126,
           forks: 18,

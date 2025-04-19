@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { ContextFileNodes, UploadedStreamContextProps } from "@/lib/type";
 import { ReactNode, createContext, useContext, useState } from "react";
 
@@ -7,18 +7,28 @@ const UploadedStreamContext = createContext<UploadedStreamContextProps>({
   setUploadedStream: () => {},
   addFile: () => {},
   removeFile: () => {},
+  isValidFolder: () => {},
 });
 
 const defaultValue: ContextFileNodes[] = [
   {
+    levelOrder: 0,
     parentFolderId: null,
     fileName: "root1",
+    fileContent: "hello ayush",
   },
   {
+    levelOrder: 0,
     parentFolderId: null,
     fileName: "root2",
   },
   {
+    levelOrder: 1,
+    parentFolderId: null,
+    fileName: "root3",
+  },
+  {
+    levelOrder: 0,
     parentFolderId: null,
     fileName: "root3",
   },
@@ -27,6 +37,7 @@ const defaultValue: ContextFileNodes[] = [
 export function UploadedStreamWrapper({ children }: { children: ReactNode }) {
   const [uploadedStream, setUploadedStream] = useState<ContextFileNodes[] | []>(
     defaultValue
+    // []
   );
 
   const addFile = (file: ContextFileNodes) => {
@@ -39,9 +50,25 @@ export function UploadedStreamWrapper({ children }: { children: ReactNode }) {
     );
   };
 
+  const isValidFolder = (node: ContextFileNodes) => {
+    const currentLevel = node.levelOrder;
+    const isAnyConflict = uploadedStream.filter(
+      (tempNode: ContextFileNodes) =>
+        tempNode.levelOrder === currentLevel &&
+        node.fileName === tempNode.fileName
+    );
+    return isAnyConflict.length == 0;
+  };
+
   return (
     <UploadedStreamContext.Provider
-      value={{ uploadedStream, setUploadedStream, addFile, removeFile }}
+      value={{
+        uploadedStream,
+        setUploadedStream,
+        addFile,
+        removeFile,
+        isValidFolder,
+      }}
     >
       {children}
     </UploadedStreamContext.Provider>

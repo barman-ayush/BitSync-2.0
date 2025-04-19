@@ -11,8 +11,13 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useUploadedStreamContext } from "@/context/fileContext";
+import { useBreadcrumbContext } from "@/context/breadCrumbContext";
+import { BreadcrumbNode, ContextFileNodes } from "@/lib/type";
 
 const AddFile = () => {
+  const { addFile , isValidFolder } = useUploadedStreamContext()
+  const { currentPath , getCurrentFolder} = useBreadcrumbContext()
   // State for folder creation
   const [folderName, setFolderName] = useState("");
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
@@ -26,7 +31,16 @@ const AddFile = () => {
   //Hanlde Folder Submit
   const handleFolderSubmit = (e : any) => {
     const fileName = e.target.value;
-    // check in the same folder , whether there is a same folder name as current filename or not
+    const currentFolder : BreadcrumbNode | null  = getCurrentFolder();
+    const newNode : ContextFileNodes= {fileName , levelOrder : currentFolder ? currentFolder.level + 1 : 0 , }
+    // Check in the current directory in context for both the cases 
+    const isContextValid = isValidFolder(newNode);
+
+    if(!currentFolder ||  currentFolder?.isContextFolder){
+      
+    }    
+
+    
     
 
 

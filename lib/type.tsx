@@ -66,7 +66,8 @@ export interface RepositoryDetails {
 // UPLOADEDSTREAM CONTEXT TYPES
 export interface ContextFileNodes{
   parentFolderId? : string | null; //  For file/folder saved insisde a folder already in db 
-  localParentFolderId? : string | null; // For a folder/file inside a not submitted folder
+  localParentFolderName? : string | null; // For a folder/file inside a not submitted folder
+  levelOrder : number;
   fileName : string;
   fileContent? : any; //  Distinction between file and folder
 }
@@ -76,4 +77,13 @@ export interface UploadedStreamContextProps{
   setUploadedStream : Dispatch<SetStateAction<ContextFileNodes[] | []>>
   addFile : (file : ContextFileNodes) => void;
   removeFile : (file : ContextFileNodes) => void
+  isValidFolder : (file : ContextFileNodes) => void;
+}
+
+
+// Breadcrumb
+export interface BreadcrumbNode{
+  nodeName : string;
+  isContextFolder? : boolean;
+  level : number;
 }

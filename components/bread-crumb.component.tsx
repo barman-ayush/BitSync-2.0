@@ -2,18 +2,16 @@ import React, { Dispatch, Fragment, SetStateAction } from "react";
 import { Button } from "./ui/button";
 import { ChevronRight, FolderPlusIcon, Home, Upload } from "lucide-react";
 import AddFile from "./file-addition.component";
+import { BreadcrumbNode } from "@/lib/type";
+import { useBreadcrumbContext } from "@/context/breadCrumbContext";
 
 interface BreadCrumbProps {
-  setCurrentPath: Dispatch<SetStateAction<string[]>>;
-  currentPath: string[];
   navigateToPathIndex: (index: number) => void;
 }
 
-const BreadCrumbs = ({
-  setCurrentPath,
-  currentPath,
-  navigateToPathIndex,
-}: BreadCrumbProps) => {
+const BreadCrumbs = ({ navigateToPathIndex }: BreadCrumbProps) => {
+  const { currentPath, setCurrentPath } = useBreadcrumbContext();
+
   return (
     <Fragment>
       <div className="flex items-center justify-between p-2 bg-muted/30 text-sm">
@@ -31,7 +29,7 @@ const BreadCrumbs = ({
             <>
               <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground flex-shrink-0" />
               <div className="flex items-center overflow-x-auto hide-scrollbar">
-                {currentPath.map((path: string, index: number) => (
+                {currentPath.map((path: BreadcrumbNode, index: number) => (
                   <React.Fragment key={index}>
                     <Button
                       variant="ghost"
@@ -39,7 +37,7 @@ const BreadCrumbs = ({
                       className="h-8 px-2 flex-shrink-0 whitespace-nowrap"
                       onClick={() => navigateToPathIndex(index)}
                     >
-                      {path}
+                      {path.nodeName}
                     </Button>
                     {index < currentPath.length - 1 && (
                       <ChevronRight className="h-4 w-4 mx-1 text-muted-foreground flex-shrink-0" />
@@ -52,7 +50,7 @@ const BreadCrumbs = ({
         </div>
 
         {/* Upload Button */}
-        <AddFile/>
+        <AddFile />
       </div>
     </Fragment>
   );

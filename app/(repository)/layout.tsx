@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <Fragment>
       <div className="root-wrapper bg-black text-white min-h-screen">
-        <SecondaryNavbar heading="dashboard"/>
+        <SecondaryNavbar heading="BitSync"/>
         {children}
       </div>
     </Fragment>
