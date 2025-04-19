@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type UserProps = {
   id: string;
   username: string;
@@ -58,4 +60,20 @@ export interface RepositoryDetails {
   admins: User[] | [];
   collaborators: User[] | [];
   viewers: User[] | [];
+}
+
+
+// UPLOADEDSTREAM CONTEXT TYPES
+export interface ContextFileNodes{
+  parentFolderId? : string | null; //  For file/folder saved insisde a folder already in db 
+  localParentFolderId? : string | null; // For a folder/file inside a not submitted folder
+  fileName : string;
+  fileContent? : any; //  Distinction between file and folder
+}
+
+export interface UploadedStreamContextProps{
+  uploadedStream : ContextFileNodes[] | [];
+  setUploadedStream : Dispatch<SetStateAction<ContextFileNodes[] | []>>
+  addFile : (file : ContextFileNodes) => void;
+  removeFile : (file : ContextFileNodes) => void
 }
